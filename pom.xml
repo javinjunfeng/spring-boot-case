@@ -5,7 +5,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>spring-boot-web</module>
-        <module>spring-boot-logbak</module>
+        <module>spring-boot-logback</module>
         <module>spring-boot-log4j2</module>
     </modules>
     <parent>
