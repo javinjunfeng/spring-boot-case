@@ -9,6 +9,7 @@
         <module>spring-boot-log4j2</module>
         <module>spring-boot-kafka</module>
         <module>spring-boot-oss</module>
+        <module>spring-boot-redis</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
