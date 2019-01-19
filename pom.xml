@@ -11,6 +11,8 @@
         <module>spring-boot-oss</module>
         <module>spring-boot-redis</module>
         <module>spring-boot-jsp</module>
+        <module>spring-boot-thymeleaf</module>
+        <module>spring-boot-thymeleaf</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
