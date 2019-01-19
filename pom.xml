@@ -10,6 +10,7 @@
         <module>spring-boot-kafka</module>
         <module>spring-boot-oss</module>
         <module>spring-boot-redis</module>
+        <module>spring-boot-jsp</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
