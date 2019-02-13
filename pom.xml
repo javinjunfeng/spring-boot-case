@@ -12,7 +12,7 @@
         <module>spring-boot-redis</module>
         <module>spring-boot-jsp</module>
         <module>spring-boot-thymeleaf</module>
-        <module>spring-boot-thymeleaf</module>
+        <module>spring-boot-jdbc</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
