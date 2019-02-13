@@ -5,7 +5,9 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import top.javinjunfeng.springboot.thymeleaf.model.User;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -65,6 +67,28 @@ public class ExampleController {
         list.add(user2);
         list.add(user3);
         return  list;
+    }
+
+    @RequestMapping("/inline")
+    public String inline(ModelMap map) {
+        map.addAttribute("userName", "katarina");
+        return "inline";
+    }
+
+    @RequestMapping("/object")
+    public String object(HttpServletRequest request) {
+        request.setAttribute("request","i am request");
+        request.getSession().setAttribute("session","i am session");
+        return "object";
+    }
+
+    @RequestMapping("/utility")
+    public String utility(ModelMap map) {
+        map.addAttribute("userName", "neo");
+        map.addAttribute("users", getUserList());
+        map.addAttribute("count", 12);
+        map.addAttribute("date", new Date());
+        return "utility";
     }
 
 }
