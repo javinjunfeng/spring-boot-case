@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
+<generatorConfiguration >
+  <!-- 数据库JDBC驱动的jar包地址 -->
+  <classPathEntry    location="/opt/apps/mysql-connector-java-5.1.33.jar"/>
+  <context id="context1" >
+    <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://127.0.0.1:3306/Spring" userId="root" password="katarina" />
+    <!--<jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://10.16.37.248:3306/clean" userId="youshuprod" password="youshu_prod" />-->
+
+    <!--配置model层包名和路径-->
+    <javaModelGenerator targetPackage="top.javinjunfeng.model.entity"
+                        targetProject="/Users/zhangjunfeng/IdeaProjects/spring-boot-case/model/src/main/java/" >
+      <property name="enableSubPackages" value="true"/>
+    </javaModelGenerator>
+
+    <!--配置dao层包名和路径-->
+    <sqlMapGenerator targetPackage="top.javinjunfeng.model.xml" targetProject="/Users/zhangjunfeng/IdeaProjects/spring-boot-case/model/src/main/java/" >
+      <property name="enableSubPackages" value="true"/>
+      <property name="trimStrings" value="true" />
+    </sqlMapGenerator>
+
+    <!--配置mapper层包名和路径-->
+    <javaClientGenerator targetPackage="top.javinjunfeng.model.mapper" targetProject="/Users/zhangjunfeng/IdeaProjects/spring-boot-case/model/src/main/java/" type="XMLMAPPER" >
+      <property name="enableSubPackages" value="true"/>
+    </javaClientGenerator>
+
+    <!--配置需要映射的表名-->
+
+    <table schema="dg_test" tableName="db_info" domainObjectName="DbInfoDO"
+           enableCountByExample="false"
+           enableUpdateByExample="false"
+           enableDeleteByExample="false"
+           enableSelectByExample="false"
+           selectByExampleQueryId="false"
+    ></table>
+
+  </context>
+</generatorConfiguration>
