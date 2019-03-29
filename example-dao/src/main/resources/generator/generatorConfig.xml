@@ -32,6 +32,9 @@
         <table tableName="db_info" domainObjectName="DbInfo">
             <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
         </table>
+        <table tableName="table_info" domainObjectName="TableInfo">
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
 
     </context>
 </generatorConfiguration>

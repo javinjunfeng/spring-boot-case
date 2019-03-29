@@ -24,7 +24,7 @@ public class DbInfoServiceImpl extends BaseServiceImpl<DbInfo> implements DbInfo
      * @return
      */
     @Override
-    public DbInfo selectByDbCode(String dbCode) {
+    public DbInfo selectByDbCode(Integer dbCode) {
         DbInfo dbInfo= new DbInfo();
         dbInfo.setDbCode(dbCode);
 

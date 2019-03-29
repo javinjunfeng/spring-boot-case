@@ -15,5 +15,5 @@ public interface DbInfoService extends BaseService<DbInfo>{
      * @param dbCode 数据源编码
      * @return
      */
-    DbInfo selectByDbCode(String dbCode);
+    DbInfo selectByDbCode(Integer dbCode);
 }

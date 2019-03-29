@@ -1,4 +1,4 @@
-package top.javinjunfeng.db.managemt.config;
+package top.javinjunfeng.db.management.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import org.apache.ibatis.session.SqlSessionFactory;

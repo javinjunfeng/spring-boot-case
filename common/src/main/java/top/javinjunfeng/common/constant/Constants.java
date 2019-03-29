@@ -1,4 +1,4 @@
-package com.sztech.absorb.core.constant;
+package top.javinjunfeng.common.constant;
 
 /**
  * Created by zhongjunkai on 17/11/27.

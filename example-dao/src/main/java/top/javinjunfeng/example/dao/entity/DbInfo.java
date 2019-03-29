@@ -6,17 +6,11 @@ import javax.persistence.*;
 @Table(name = "db_info")
 public class DbInfo {
     /**
-     * 主键
-     */
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
-    /**
      * 数据源编码
      */
+    @Id
     @Column(name = "db_code")
-    private String dbCode;
+    private Integer dbCode;
 
     /**
      * 数据源类型
@@ -55,6 +49,12 @@ public class DbInfo {
     private String dbPassword;
 
     /**
+     * 是否启用（‘1’已启用，‘0’未启用）
+     */
+    @Column(name = "is_use")
+    private String isUse;
+
+    /**
      * 创建时间
      */
     @Column(name = "create_time")
@@ -67,29 +67,11 @@ public class DbInfo {
     private Date modifyTime;
 
     /**
-     * 获取主键
-     *
-     * @return id - 主键
-     */
-    public Integer getId() {
-        return id;
-    }
-
-    /**
-     * 设置主键
-     *
-     * @param id 主键
-     */
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    /**
      * 获取数据源编码
      *
      * @return db_code - 数据源编码
      */
-    public String getDbCode() {
+    public Integer getDbCode() {
         return dbCode;
     }
 
@@ -98,7 +80,7 @@ public class DbInfo {
      *
      * @param dbCode 数据源编码
      */
-    public void setDbCode(String dbCode) {
+    public void setDbCode(Integer dbCode) {
         this.dbCode = dbCode;
     }
 
@@ -208,6 +190,24 @@ public class DbInfo {
      */
     public void setDbPassword(String dbPassword) {
         this.dbPassword = dbPassword;
+    }
+
+    /**
+     * 获取是否启用（‘1’已启用，‘0’未启用）
+     *
+     * @return is_use - 是否启用（‘1’已启用，‘0’未启用）
+     */
+    public String getIsUse() {
+        return isUse;
+    }
+
+    /**
+     * 设置是否启用（‘1’已启用，‘0’未启用）
+     *
+     * @param isUse 是否启用（‘1’已启用，‘0’未启用）
+     */
+    public void setIsUse(String isUse) {
+        this.isUse = isUse;
     }
 
     /**

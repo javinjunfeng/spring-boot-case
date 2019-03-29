@@ -8,6 +8,7 @@
         <module>db-management</module>
         <module>common</module>
         <module>example-service</module>
+        <module>rdbms-util</module>
         <!--<module>core</module>-->
     </modules>
     <parent>

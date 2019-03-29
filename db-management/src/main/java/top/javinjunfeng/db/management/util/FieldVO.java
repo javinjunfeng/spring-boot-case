@@ -1,9 +1,7 @@
-package com.sztech.absorb.core.vo;
+package top.javinjunfeng.db.management.util;
 
-import com.sztech.absorb.core.constant.Constants;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import top.javinjunfeng.common.constant.Constants;
 
 import java.util.List;
 
@@ -13,73 +11,61 @@ import java.util.List;
  * Created by zhongjunkai on 18/10/26.
  */
 @Data
-@ApiModel("字段视图展示类")
 public class FieldVO {
 
     /**
      * 自增ID
      */
-    @ApiModelProperty("自增ID")
     private Integer id;
 
     /**
      * 字段英文名
      */
-    @ApiModelProperty("字段英文名")
     private String fieldNameEn;
 
     /**
      * 字段中文名
      */
-    @ApiModelProperty("字段中文名")
     private String fieldNameCn;
 
     /**
      * 字段类型
      */
-    @ApiModelProperty("字段类型")
     private String fieldType;
 
     /**
      * 字段大小
      */
-    @ApiModelProperty("字段大小")
     private String fieldSize;
 
     /**
      * 是否为空标记，默认值为1(可以为空)
      */
-    @ApiModelProperty("是否为空标记，默认值为1(可以为空)")
     private Integer nullFlag = Constants.FieldNullable.YES.getCode();
 
     /**
      * 是否必填标记，默认值为0(必须填写)
      */
-    @ApiModelProperty("是否必填标记，默认值为0(必须填写)")
     private Integer fillFlag = Constants.FieldFillable.YES.getCode();
 
     /**
      * 输入框类型
      */
-    @ApiModelProperty("输入框类型")
     private String inputType;
 
     /**
      * 输入框配置类型
      */
-    @ApiModelProperty("输入框配置类型")
     private String configType;
 
     /**
      * 所属表
      */
-    @ApiModelProperty("所属表")
     private String belongTable;
 
     /**
      * 表单ID
      */
-    @ApiModelProperty("表单ID")
     private Integer formId;
 
     /**
@@ -95,8 +81,7 @@ public class FieldVO {
     /**
      * 配置项，如果输入组件类型是有默认字典值的，则这里使用字典值集合
      */
-    @ApiModelProperty("配置项")
-    private List<ConfigVo> configValues;
+//    private List<ConfigVo> configValues;
 
 
 }

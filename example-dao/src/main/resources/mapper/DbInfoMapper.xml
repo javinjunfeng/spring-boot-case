@@ -5,14 +5,14 @@
     <!--
       WARNING - @mbg.generated
     -->
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="db_code" jdbcType="VARCHAR" property="dbCode" />
-    <result column="db_type" jdbcType="VARCHAR" property="dbType" />
+    <id column="db_code" jdbcType="INTEGER" property="dbCode" />
+    <result column="db_type" jdbcType="CHAR" property="dbType" />
     <result column="db_ip" jdbcType="VARCHAR" property="dbIp" />
     <result column="db_port" jdbcType="VARCHAR" property="dbPort" />
     <result column="db_name" jdbcType="VARCHAR" property="dbName" />
     <result column="db_username" jdbcType="VARCHAR" property="dbUsername" />
     <result column="db_password" jdbcType="VARCHAR" property="dbPassword" />
+    <result column="is_use" jdbcType="CHAR" property="isUse" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
   </resultMap>

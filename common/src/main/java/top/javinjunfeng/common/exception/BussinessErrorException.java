@@ -1,4 +1,4 @@
-package com.sztech.absorb.core.exception;
+package top.javinjunfeng.common.exception;
 
 /**
  * 业务逻辑错误异常

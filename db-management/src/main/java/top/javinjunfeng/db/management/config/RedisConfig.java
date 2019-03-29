@@ -1,4 +1,4 @@
-package top.javinjunfeng.db.managemt.config;
+package top.javinjunfeng.db.management.config;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;

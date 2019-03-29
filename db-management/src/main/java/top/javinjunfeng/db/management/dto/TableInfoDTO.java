@@ -1,4 +1,4 @@
-package top.javinjunfeng.example.dao.dto;
+package top.javinjunfeng.db.management.dto;
 
 import lombok.Data;
 

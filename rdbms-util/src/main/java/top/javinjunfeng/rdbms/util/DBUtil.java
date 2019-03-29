@@ -8,6 +8,7 @@ import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import top.javinjunfeng.rdbms.dto.InformationSchemaTables;
 import top.javinjunfeng.rdbms.exception.RdbmsUtilException;
 
 import java.sql.*;
@@ -17,15 +18,11 @@ import java.util.concurrent.*;
 public final class DBUtil {
     private static final Logger LOG = LoggerFactory.getLogger(DBUtil.class);
 
-    private static final ThreadLocal<ExecutorService> rsExecutors = new ThreadLocal<ExecutorService>() {
-        @Override
-        protected ExecutorService initialValue() {
-            return Executors.newFixedThreadPool(1, new ThreadFactoryBuilder()
-                    .setNameFormat("rsExecutors-%d")
-                    .setDaemon(true)
-                    .build());
-        }
-    };
+    private static final ThreadLocal<ExecutorService> RS_EXECUTORS = ThreadLocal.withInitial(
+            () -> Executors.newFixedThreadPool(1, new ThreadFactoryBuilder()
+            .setNameFormat("RS_EXECUTORS-%d")
+            .setDaemon(true)
+            .build()));
 
     private DBUtil() {
     }
@@ -63,7 +60,7 @@ public final class DBUtil {
                             }
                         }
                     }
-                    throw new Exception("DataX无法连接对应的数据库，可能原因是：1) 配置的ip/port/database/jdbc错误，无法连接。2) 配置的username/password错误，鉴权失败。请和DBA确认该数据库的连接信息是否正确。");
+                    throw new Exception("无法连接对应的数据库，可能原因是：1) 配置的ip/port/database/jdbc错误，无法连接。2) 配置的username/password错误，鉴权失败。请和DBA确认该数据库的连接信息是否正确。");
 //                    throw new Exception(DBUtilErrorCode.JDBC_NULL.toString());
                 }
             }, 7, 1000L, true);
@@ -312,13 +309,8 @@ public final class DBUtil {
                                            final String jdbcUrl, final String username, final String password, final String socketTimeout) {
 
         try {
-            return RetryUtil.executeWithRetry(new Callable<Connection>() {
-                @Override
-                public Connection call() throws Exception {
-                    return DBUtil.connect(dataBaseType, jdbcUrl, username,
-                            password, socketTimeout);
-                }
-            }, 9, 1000L, true);
+            return RetryUtil.executeWithRetry(() -> DBUtil.connect(dataBaseType, jdbcUrl, username,
+                    password, socketTimeout), 9, 1000L, true);
         } catch (Exception e) {
             throw RdbmsUtilException.asRdbmsUtilException(
                     DBUtilErrorCode.CONN_DB_ERROR,
@@ -356,6 +348,8 @@ public final class DBUtil {
         Properties prop = new Properties();
         prop.put("user", user);
         prop.put("password", pass);
+        prop.put("remarks","true");
+        prop.put("useInformationSchema","true");
 
         if (dataBaseType == DataBaseType.Oracle) {
             //oracle.net.READ_TIMEOUT for jdbc versions < 10.1.0.5 oracle.jdbc.ReadTimeout for jdbc versions >=10.1.0.5
@@ -534,9 +528,9 @@ public final class DBUtil {
         Statement statement = null;
         ResultSet rs = null;
 
-        Triple<List<String>, List<Integer>, List<String>> columnMetaData = new ImmutableTriple<List<String>, List<Integer>, List<String>>(
-                new ArrayList<String>(), new ArrayList<Integer>(),
-                new ArrayList<String>());
+        Triple<List<String>, List<Integer>, List<String>> columnMetaData = new ImmutableTriple<>(
+                new ArrayList<>(), new ArrayList<>(),
+                new ArrayList<>());
         try {
             statement = conn.createStatement();
             String queryColumnSql = "select " + column + " from " + tableName
@@ -545,11 +539,9 @@ public final class DBUtil {
             rs = statement.executeQuery(queryColumnSql);
             ResultSetMetaData rsMetaData = rs.getMetaData();
             for (int i = 0, len = rsMetaData.getColumnCount(); i < len; i++) {
-
                 columnMetaData.getLeft().add(rsMetaData.getColumnName(i + 1));
                 columnMetaData.getMiddle().add(rsMetaData.getColumnType(i + 1));
-                columnMetaData.getRight().add(
-                        rsMetaData.getColumnTypeName(i + 1));
+                columnMetaData.getRight().add(rsMetaData.getColumnTypeName(i + 1));
             }
             return columnMetaData;
 
@@ -569,7 +561,7 @@ public final class DBUtil {
         try {
             connection = connect(dataBaseType, url, user, pass);
             if (connection != null) {
-                if (dataBaseType.equals(dataBaseType.MySql) && checkSlave) {
+                if (dataBaseType.equals(DataBaseType.MySql) && checkSlave) {
                     //dataBaseType.MySql
                     boolean connOk = !isSlaveBehind(connection);
                     return connOk;
@@ -610,31 +602,6 @@ public final class DBUtil {
         return false;
     }
 
-    public static boolean isOracleMaster(final String url, final String user, final String pass) {
-        try {
-            return RetryUtil.executeWithRetry(new Callable<Boolean>() {
-                @Override
-                public Boolean call() throws Exception {
-                    Connection conn = null;
-                    try {
-                        conn = connect(DataBaseType.Oracle, url, user, pass);
-                        ResultSet rs = query(conn, "select DATABASE_ROLE from V$DATABASE");
-                        if (DBUtil.asyncResultSetNext(rs, 5)) {
-                            String role = rs.getString("DATABASE_ROLE");
-                            return "PRIMARY".equalsIgnoreCase(role);
-                        }
-                        throw RdbmsUtilException.asRdbmsUtilException(DBUtilErrorCode.RS_ASYNC_ERROR,
-                                String.format("select DATABASE_ROLE from V$DATABASE failed,请检查您的jdbcUrl:%s.", url));
-                    } finally {
-                        DBUtil.closeDBResources(null, conn);
-                    }
-                }
-            }, 3, 1000L, true);
-        } catch (Exception e) {
-            throw RdbmsUtilException.asRdbmsUtilException(DBUtilErrorCode.CONN_DB_ERROR,
-                    String.format("select DATABASE_ROLE from V$DATABASE failed, url: %s", url), e);
-        }
-    }
 
     public static ResultSet query(Connection conn, String sql)
             throws SQLException {
@@ -679,35 +646,6 @@ public final class DBUtil {
     }
 
 
-    private static void doDealWithSessionConfig(Connection conn,
-                                                List<String> sessions, String message) {
-        if (null == sessions || sessions.isEmpty()) {
-            return;
-        }
-
-        Statement stmt;
-        try {
-            stmt = conn.createStatement();
-        } catch (SQLException e) {
-            throw RdbmsUtilException
-                    .asRdbmsUtilException(DBUtilErrorCode.SET_SESSION_ERROR, String
-                                    .format("session配置有误. 因为根据您的配置执行 session 设置失败. 上下文信息是:[%s]. 请检查您的配置并作出修改.", message),
-                            e);
-        }
-
-        for (String sessionSql : sessions) {
-            LOG.info("execute sql:[{}]", sessionSql);
-            try {
-                DBUtil.executeSqlWithoutResultSet(stmt, sessionSql);
-            } catch (SQLException e) {
-                throw RdbmsUtilException.asRdbmsUtilException(
-                        DBUtilErrorCode.SET_SESSION_ERROR, String.format(
-                                "session配置有误. 因为根据您的配置执行 session 设置失败. 上下文信息是:[%s]. 请检查您的配置并作出修改.", message), e);
-            }
-        }
-        DBUtil.closeDBResources(stmt, null);
-    }
-
     public static void sqlValid(String sql, DataBaseType dataBaseType){
         SQLStatementParser statementParser = SQLParserUtils.createSQLStatementParser(sql,dataBaseType.getTypeName());
         statementParser.parseStatementList();
@@ -723,17 +661,70 @@ public final class DBUtil {
     }
 
     public static boolean asyncResultSetNext(final ResultSet resultSet, int timeout) {
-        Future<Boolean> future = rsExecutors.get().submit(new Callable<Boolean>() {
-            @Override
-            public Boolean call() throws Exception {
-                return resultSet.next();
-            }
-        });
+        Future<Boolean> future = RS_EXECUTORS.get().submit(resultSet::next);
         try {
             return future.get(timeout, TimeUnit.SECONDS);
         } catch (Exception e) {
             throw RdbmsUtilException.asRdbmsUtilException(
                     DBUtilErrorCode.RS_ASYNC_ERROR, "异步获取ResultSet失败", e);
         }
+    }
+
+
+    /**
+     * 获取表元数据信息
+     * @param dataBaseType
+     * @param jdbcUrl
+     * @param user
+     * @param pass
+     * @param tableName
+     * @return
+     */
+    public static InformationSchemaTables getMySqlTableInfo(DataBaseType dataBaseType,
+                                               String jdbcUrl, String user, String pass, String tableName) {
+        Connection conn = getConnection(dataBaseType, jdbcUrl, user, pass);
+        return getMySqlTableInfoByConn(dataBaseType, conn, tableName);
+    }
+
+    public static InformationSchemaTables getMySqlTableInfoByConn(DataBaseType dataBaseType, Connection conn, String tableName) {
+        Statement statement = null;
+        ResultSet rs = null;
+        String queryColumnSql = null;
+        InformationSchemaTables schemaTable = new InformationSchemaTables();
+        try {
+            statement = conn.createStatement();
+            queryColumnSql = String.format("SELECT * FROM  information_schema.TABLES where table_name ='%s'",
+                    tableName);
+            rs = statement.executeQuery(queryColumnSql);
+            while (rs.next()) {
+                schemaTable.setTableCatalog(rs.getString(1));
+                schemaTable.setTableSchema(rs.getString(2));
+                schemaTable.setTableName(rs.getString(3));
+                schemaTable.setTableType(rs.getString(4));
+                schemaTable.setEngine(rs.getString(5));
+                schemaTable.setVersion(rs.getLong(6));
+                schemaTable.setRowFormat(rs.getString(7));
+                schemaTable.setTableRows(rs.getLong(8));
+                schemaTable.setAvgRowLength(rs.getLong(9));
+                schemaTable.setDataLength(rs.getLong(10));
+                schemaTable.setMaxDataLength(rs.getLong(11));
+                schemaTable.setIndexLength(rs.getLong(12));
+                schemaTable.setDataFree(rs.getLong(13));
+                schemaTable.setAutoIncrement(rs.getLong(14));
+                schemaTable.setCreateTime(rs.getDate(15));
+                schemaTable.setUpdateTime(rs.getDate(16));
+                schemaTable.setCheckTime(rs.getDate(17));
+                schemaTable.setTableCollation(rs.getString(18));
+                schemaTable.setChecksum(rs.getLong(19));
+                schemaTable.setCreateOptions(rs.getString(20));
+                schemaTable.setTableComment(rs.getString(21));
+            }
+        } catch (SQLException e) {
+            throw top.javinjunfeng.rdbms.util.RdbmsException.asQueryException(dataBaseType,e,queryColumnSql,tableName,null);
+        } finally {
+            DBUtil.closeDBResources(rs, statement, conn);
+        }
+
+        return schemaTable;
     }
 }

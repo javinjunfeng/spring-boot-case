@@ -9,7 +9,7 @@ import lombok.Data;
  * @Date: 2019/3/22 3:31 PM
  */
 @Data
-public class InformationSchemaTable {
+public class MySqlInformationSchemaTable {
 
     /**
      * 数据表登记目录
@@ -35,7 +35,88 @@ public class InformationSchemaTable {
      * 使用的数据库引擎[MyISAM|CSV|InnoDB]
      */
     private String engine;
-    private String tableCatalog;
+
+    /**
+     * 版本，默认值10
+     */
+    private String version;
+
+    /**
+     * 行格式[Compact|Dynamic|Fixed]
+     */
+    private String rowFormat;
+
+    /**
+     * 表里所存多少行数据
+     */
+    private String tableRows;
+
+    /**
+     * 平均行长度
+     */
+    private String avgRowLength;
+
+    /**
+     * 数据长度
+     */
+    private String dataLength;
+
+    /**
+     * 最大数据长度
+     */
+    private String maxDataLength;
+
+    /**
+     * 索引长度
+     */
+    private String indexLength;
+
+    /**
+     * 空间碎片
+     */
+    private String dataFree;
+
+    /**
+     * 自增主键的自动增量当前值
+     */
+    private String autoIncrement;
+
+    /**
+     * 表的创建时间
+     */
+    private String createTime;
+
+    /**
+     * 表的更新时间
+     */
+    private String updateTime;
+
+    /**
+     * 表的检查时间
+     */
+    private String checkTime;
+
+    /**
+     * 表的字符校验编码集
+     */
+    private String tableCollation;
+
+    /**
+     * 校验和
+     */
+    private String checksum;
+
+    /**
+     * 创建选项
+     */
+    private String createOptions;
+
+    /**
+     * 表的注释、备注
+     */
+    private String tableComment;
+
+
 
 
 }
