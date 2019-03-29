@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.javinjunfeng.example.dao.mapper.TableInfoMapper">
+  <resultMap id="BaseResultMap" type="top.javinjunfeng.example.dao.entity.TableInfo">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="table_id" jdbcType="INTEGER" property="tableId" />
+    <result column="db_code" jdbcType="INTEGER" property="dbCode" />
+    <result column="table_name" jdbcType="VARCHAR" property="tableName" />
+    <result column="table_comment" jdbcType="VARCHAR" property="tableComment" />
+    <result column="key_column" jdbcType="VARCHAR" property="keyColumn" />
+    <result column="md5_column" jdbcType="VARCHAR" property="md5Column" />
+    <result column="is_use" jdbcType="CHAR" property="isUse" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+  </resultMap>
+</mapper>
