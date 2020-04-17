@@ -20,7 +20,7 @@ public class OSSUnit {
     // 阿里云API的密钥Access Key ID
     private static String ACCESS_KEY_ID = "LTAIUq1a9NvjvAwc";
     // 阿里云API的密钥Access Key Secre
-    private static String ACCESS_KEY_SECRET = "aoJcjes4rjGh8CYxMRNFYd1bhrDHzk";
+    private static String ACCESS_KEY_SECRET = "************";
       
     //init static datas
 //    static{
